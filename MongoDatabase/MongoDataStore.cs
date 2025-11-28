@@ -379,40 +379,45 @@ public sealed partial class MongoDataStore : IDataStore
         var options = new FindOneAndUpdateOptions<BsonDocument, BsonDocument>
         {
             IsUpsert = true,
-            ReturnDocument = ReturnDocument.After
+            ReturnDocument = ReturnDocument.Before
         };
         var result = counters.FindOneAndUpdate(filter, update, options);
         var seqValue = result?.GetValue("seq", BsonNull.Value);
-        var seq = seqValue != null && !seqValue.IsBsonNull ? seqValue.ToInt64() : 1L;
+        var seq = seqValue != null && !seqValue.IsBsonNull ? seqValue.ToInt64() + 1 : 1L;
 
-        if (seq == 1)
+        if (result is null)
         {
             var col = database.GetCollection<BsonDocument>(insert.Table.Name);
 
-            // Scan max(identityColumn)
+            // Scan max(identityColumn) if we had to create the counter entry.
+            var existingFilter = Builders<BsonDocument>.Filter.And(
+                Builders<BsonDocument>.Filter.Exists(insert.IdentityColumn, true),
+                Builders<BsonDocument>.Filter.Ne(insert.IdentityColumn, BsonNull.Value));
             var sort = Builders<BsonDocument>.Sort.Descending(insert.IdentityColumn);
             var projection = Builders<BsonDocument>.Projection.Include(insert.IdentityColumn);
 
-            var doc = col.Find(Builders<BsonDocument>.Filter.Empty)
+            var doc = col.Find(existingFilter)
                          .Sort(sort)
                          .Project(projection)
                          .Limit(1)
                          .FirstOrDefault();
 
             long maxValue = 0;
-            if (doc != null && doc.TryGetValue(insert.IdentityColumn, out var v) && !v.IsBsonNull)
+            if (doc != null && doc.TryGetValue(insert.IdentityColumn, out var v) && !v.IsBsonNull &&
+                (v.IsInt64 || v.IsInt32 || v.IsDouble || v.IsDecimal128))
                 maxValue = v.ToInt64();
 
-            long newSeq = maxValue + 1;
-
-            // update counters document to match this “real” max
-            counters.FindOneAndUpdate(
-                filter,
-                new BsonDocument("$set", new BsonDocument("seq", newSeq)),
-                new FindOneAndUpdateOptions<BsonDocument> { IsUpsert = true }
-            );
-
-            seq = newSeq;
+            var desired = maxValue + 1;
+            if (desired > seq)
+            {
+                var maxUpdate = new BsonDocument("$max", new BsonDocument("seq", desired));
+                var recalibrated = counters.FindOneAndUpdate(
+                    filter,
+                    maxUpdate,
+                    new FindOneAndUpdateOptions<BsonDocument, BsonDocument> { ReturnDocument = ReturnDocument.After });
+                var recalibratedValue = recalibrated?.GetValue("seq", BsonNull.Value);
+                seq = recalibratedValue != null && !recalibratedValue.IsBsonNull ? recalibratedValue.ToInt64() : desired;
+            }
         }
 
         switch (insert.IdentityColumnType)
