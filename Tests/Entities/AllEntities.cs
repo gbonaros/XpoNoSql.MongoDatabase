@@ -4,8 +4,6 @@ using DevExpress.Xpo;
 // Legacy model entities used across tests (MongoProvider.Tests.Models)
 namespace MongoProvider.Tests.Models
 {
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public class Customer : XPBaseObject
     {
         [Key(true)] public Guid Key { get; set; }
@@ -24,8 +22,6 @@ namespace MongoProvider.Tests.Models
         public XPCollection<Order> Orders => GetCollection<Order>(nameof(Orders));
     }
 
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public class Order : XPObject
     {
         public Order(Session session) : base(session) { }
@@ -43,8 +39,6 @@ namespace MongoProvider.Tests.Models
         public XPCollection<Product> Products => GetCollection<Product>(nameof(Products));
     }
 
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public class Product : XPObject
     {
         public Product(Session session) : base(session) { }
@@ -79,8 +73,6 @@ namespace MongoProvider.Tests.Models
 namespace MongoProvider.Tests.Entities
 {
     [Persistent("Customers")]
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public sealed class TestCustomer : XPObject
     {
         public TestCustomer(Session session) : base(session) { }
@@ -105,8 +97,6 @@ namespace MongoProvider.Tests.Entities
     }
 
     [Persistent("Orders")]
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public sealed class TestOrder : XPObject
     {
         public TestOrder(Session session) : base(session) { }
@@ -173,8 +163,6 @@ namespace MongoProvider.Tests.Entities
 namespace XpoNoSQL.MongoDatabase.Tests.Simple
 {
     [Persistent("SimpleItems")]
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public sealed class SimpleItem : XPObject
     {
         public SimpleItem(Session session) : base(session) { }
@@ -224,8 +212,6 @@ namespace XpoNoSQL.MongoDatabase.Tests.Simple
     }
 
     [Persistent("SimpleParents")]
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public sealed class SimpleParent : XPObject
     {
         public SimpleParent(Session session) : base(session) { }
@@ -257,8 +243,6 @@ namespace XpoNoSQL.MongoDatabase.Tests.Simple
     }
 
     [Persistent("SimpleChildren")]
-    [DeferredDeletion(false)]
-    [OptimisticLocking(false)]
     public sealed class SimpleChild : XPObject
     {
         public SimpleChild(Session session) : base(session) { }

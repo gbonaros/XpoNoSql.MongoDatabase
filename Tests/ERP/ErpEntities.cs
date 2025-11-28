@@ -5,8 +5,6 @@ using System;
 namespace XpoNoSQL.MongoDatabase.Tests.ERP;
 
 [Persistent("ErpCustomers")]
-[DeferredDeletion(false)]
-[OptimisticLocking(false)]
 public sealed class ErpCustomer : XPObject
 {
     public ErpCustomer(Session session) : base(session)
@@ -61,8 +59,6 @@ public sealed class ErpCustomer : XPObject
 }
 
 [Persistent("ErpProducts")]
-[DeferredDeletion(false)]
-[OptimisticLocking(false)]
 public sealed class ErpProduct : XPObject
 {
     public ErpProduct(Session session) : base(session)
@@ -100,8 +96,6 @@ public sealed class ErpProduct : XPObject
 }
 
 [Persistent("ErpOrders")]
-[DeferredDeletion(false)]
-[OptimisticLocking(false)]
 public sealed class ErpOrder : XPObject
 {
     public ErpOrder(Session session) : base(session)
@@ -150,8 +144,6 @@ public sealed class ErpOrder : XPObject
 }
 
 [Persistent("ErpOrderLines")]
-[DeferredDeletion(false)]
-[OptimisticLocking(false)]
 public sealed class ErpOrderLine : XPObject
 {
     public ErpOrderLine(Session session) : base(session)

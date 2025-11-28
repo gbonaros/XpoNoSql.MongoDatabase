@@ -33,8 +33,6 @@ public sealed class Kid : XPBaseObject
 }
 
 [Persistent]
-[DeferredDeletion(false)]
-[OptimisticLocking(false)]
 public sealed class AppUser : XPBaseObject
 {
     public AppUser(Session s) : base(s) { }

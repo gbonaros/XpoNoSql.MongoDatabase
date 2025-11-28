@@ -3,6 +3,12 @@ using DevExpress.Xpo.DB;
 using DevExpress.Xpo.DB.Helpers;
 using DevExpress.Xpo.Exceptions;
 
+using DotNet.Testcontainers.Builders;
+
+using System.ComponentModel;
+
+using Testcontainers.MongoDb;
+
 using XpoNoSQL.MongoDatabase.Core;
 
 using Xunit;
@@ -11,31 +17,47 @@ namespace XpoNoSQL.MongoDatabase.Tests;
 
 public sealed class DbFixture : IAsyncLifetime
 {
-    private const string DefaultDatabaseName = "xpo-mongo-crud-tests";
-    private const string ProviderAssemblyName = "XpoNoSQL.MongoDB.dll";
-    private const string ProviderTypeName = "XpoMongoProvider.MongoDataStore";
+    private MongoDbContainer _container;
+
+    private const string DefaultDatabaseName = "xpo-mongo-tests";
     private IDisposable[] providerDisposables = Array.Empty<IDisposable>();
-    private string connectionUri = "mongodb://localhost:27017";
+    private string connectionUri = "mongodb://localhost:27118";
 
     public IDataLayer DataLayer { get; private set; } = null!;
 
     public Task InitializeAsync()
     {
-        //BuildSqLite();
-        BuildXpoNoSql();
+        //BuildSqlLocal();
+        BuildForMongoDatabase();
         return Task.CompletedTask;
     }
 
-    private void BuildSqLite()
+    private void BuildSqlLocal()
     {
-        var connectionString = @"Integrated Security=SSPI;Pooling=false;Data Source=(localdb)\mssqllocaldb;Initial Catalog=EMS2";
+        var connectionString = $"Integrated Security=SSPI;Pooling=false;Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DefaultDatabaseName}";
         var provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
         DataLayer = new ThreadSafeDataLayer(provider);
 
     }
-    private void BuildXpoNoSql()
+    private void BuildForMongoDatabase()
     {
-        MongoConnectionProvider.Register(); // just to ensure Xpo can find our provider
+        bool useContainer = true;
+        if (useContainer) // use the container or a default local mongodb
+        {
+            _container = new MongoDbBuilder()
+                    //.WithImage("mongo:7.0") // or whatever version you prefer
+                    .WithPortBinding(27017, true)
+                    .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(27017)))
+                    //.WithCleanUp(true)
+                    .WithName($"{DefaultDatabaseName}")
+                    .Build();
+
+            _container.StartAsync().GetAwaiter().GetResult();
+
+            connectionUri = _container.GetConnectionString();
+        }
+        // Ensure XPO knows how to resolve "mongodb://" connections
+        MongoConnectionProvider.Register();
         string connectionString = MongoConnectionProvider.GetConnectionString(connectionUri, DefaultDatabaseName);
         var provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
         DataLayer = new ThreadSafeDataLayer(provider);
