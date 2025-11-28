@@ -7,7 +7,7 @@
 
 		<!-- NuGet metadata -->
 		<PackageId>XpoNoSql.MongoDatabase</PackageId>
-		<Version>0.2.0</Version>
+		<Version>0.2.1</Version>
 		<Authors>George Bonaros</Authors>
 		<Company></Company>
 		<Description>
