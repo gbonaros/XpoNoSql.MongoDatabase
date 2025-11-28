@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+		<!-- NuGet metadata -->
+		<PackageId>XpoNoSql.MongoDatabase</PackageId>
+		<Version>0.2.0</Version>
+		<Authors>George Bonaros</Authors>
+		<Company></Company>
+		<Description>
+			MongoDB DataStore for DevExpress XPO that translates SelectStatements,
+			criteria, joins, grouping, aggregates, subqueries and CRUD into MongoDB aggregation pipelines.
+		</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/gbonaros/XpoNoSql.MongoDatabase</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gbonaros/XpoNoSql.MongoDatabase.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>DevExpress;XPO;MongoDB;DataStore;NoSQL;.NET;XAF</PackageTags>
+
+		<!-- Build & pack -->
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>	
+	
+	<ItemGroup>
+		<PackageReference Include="DevExpress.Data" Version="25.1.*" />
+		<PackageReference Include="DevExpress.Xpo" Version="25.1.*" />
+		<PackageReference Include="MongoDB.Driver" Version="3.5.0" />
+	</ItemGroup>
+</Project>

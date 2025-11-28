@@ -1,0 +1,23 @@
+﻿# Build
+bin/
+obj/
+Build/
+
+# VS / Rider / Code
+.vscode/
+.idea/
+.vs/
+.cr/
+
+*.user
+*.suo
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+TestResults/
