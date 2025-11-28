@@ -69,8 +69,7 @@ public static class MongoSortBuilder
 
                 if (alias == null)
                 {
-                    autoCounter++;
-                    continue;
+                    throw new NotSupportedException($"Unable to resolve sort expression '{sort.Property}' to a projected or grouped field.");
                 }
             }
 
@@ -97,4 +96,3 @@ public static class MongoSortBuilder
         return new BsonDocument("$sort", sortDoc);
     }
 }
-
