@@ -761,8 +761,8 @@ public sealed class MongoCriteriaTranslator : IQueryCriteriaVisitor<MongoExpress
             var innerOperands = function.Operands.Skip(1).ToArray();
             var normalized = new FunctionOperator(functionOperatorType, innerOperands);
 
-            // Important: call your existing FunctionOperator translation path,
-            // NOT the "custom" path again, or you'll recurse.
+            // Important: we should call the existing FunctionOperator translation path,
+            // NOT the "custom" path again, or we will recurse.
             return TranslateFunction(normalized);
         }
 

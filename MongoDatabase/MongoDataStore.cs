@@ -202,7 +202,7 @@ public sealed partial class MongoDataStore : IDataStore
         var options = new AggregateOptions
         {
             Collation = new Collation(
-                locale: culture,                   // you can make this configurable later
+                locale: culture,                   // we can make this configurable later
                 strength: caseSensitive
                     ? CollationStrength.Tertiary   // case-sensitive
                     : CollationStrength.Secondary, // case-insensitive

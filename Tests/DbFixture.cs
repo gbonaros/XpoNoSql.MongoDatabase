@@ -22,6 +22,7 @@ public sealed class DbFixture : IAsyncLifetime
     private const string DefaultDatabaseName = "xpo-mongo-tests";
     private IDisposable[] providerDisposables = Array.Empty<IDisposable>();
     private string connectionUri = "mongodb://localhost:27118";
+    IDataStore provider;
 
     public IDataLayer DataLayer { get; private set; } = null!;
 
@@ -35,7 +36,7 @@ public sealed class DbFixture : IAsyncLifetime
     private void BuildSqlLocal()
     {
         var connectionString = $"Integrated Security=SSPI;Pooling=false;Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DefaultDatabaseName}";
-        var provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
+        provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
         DataLayer = new ThreadSafeDataLayer(provider);
 
     }
@@ -48,7 +49,8 @@ public sealed class DbFixture : IAsyncLifetime
                     //.WithImage("mongo:7.0") // or whatever version you prefer
                     .WithPortBinding(27017, true)
                     .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(27017)))
-                    //.WithCleanUp(true)
+                    .WithCleanUp(true)
+                    .WithReuse(true)
                     .WithName($"{DefaultDatabaseName}")
                     .Build();
 
@@ -59,7 +61,7 @@ public sealed class DbFixture : IAsyncLifetime
         // Ensure XPO knows how to resolve "mongodb://" connections
         MongoConnectionProvider.Register();
         string connectionString = MongoConnectionProvider.GetConnectionString(connectionUri, DefaultDatabaseName);
-        var provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
+        provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
         DataLayer = new ThreadSafeDataLayer(provider);
     }
 
