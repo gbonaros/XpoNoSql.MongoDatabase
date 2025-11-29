@@ -1,5 +1,5 @@
 // Part of the XpoNoSql.MongoDatabase provider.
-// This file implements MongoDataStore construction and initialization as part of the XPO → MongoDB translation pipeline.
+// This file implements MongoDataStore construction and initialization as part of the XPO to MongoDB translation pipeline.
 // Logic here must remain consistent with the rest of the provider.
 using DevExpress.Xpo.DB;
 

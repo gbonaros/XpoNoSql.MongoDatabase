@@ -1,7 +1,8 @@
 // Part of the XpoNoSql.MongoDatabase provider.
-// This file implements connection string parsing and normalization for the Mongo data store as part of the XPO → MongoDB translation pipeline.
+// This file implements connection string parsing and normalization for the Mongo data store as part of the XPO to MongoDB translation pipeline.
 // Logic here must remain consistent with the rest of the provider.
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace XpoNoSQL.MongoDatabase.Core;

@@ -1,6 +1,7 @@
 using DevExpress.Xpo.DB;
 using DevExpress.Xpo.DB.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace XpoNoSQL.MongoDatabase.Core;
