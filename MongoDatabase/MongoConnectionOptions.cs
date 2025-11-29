@@ -10,7 +10,7 @@ namespace XpoNoSQL.MongoDatabase.Core;
 /// Represents parsed connection options for the Mongo data store.
 /// Supports Mongo URI or XPO-style key=value strings.
 /// </summary>
-public sealed record MongoConnectionOptions(string MongoUrl, string DatabaseName)
+public sealed record MongoConnectionOptions(string MongoUrl, string DatabaseName, bool? CaseSensitive = null, string CollationLocale = null)
 {
     /// <summary>
     /// Parses a connection string into Mongo URL and database name components.
@@ -24,6 +24,9 @@ public sealed record MongoConnectionOptions(string MongoUrl, string DatabaseName
         if (connectionString.StartsWith("mongodb://", StringComparison.OrdinalIgnoreCase) ||
             connectionString.StartsWith("mongodb+srv://", StringComparison.OrdinalIgnoreCase))
         {
+            bool? caseSensitiveFromUri = null;
+            string? localeFromUri = null;
+
             // Try to extract database name from the URI path: mongodb://host/dbName?opt=...
             int schemeEnd = connectionString.IndexOf("://", StringComparison.Ordinal);
             int firstSlash = connectionString.IndexOf('/', schemeEnd + 3);
@@ -34,10 +37,36 @@ public sealed record MongoConnectionOptions(string MongoUrl, string DatabaseName
             int endIdx = afterSlash.IndexOfAny(new[] { '?', '/', ' ' });
             string dbFromUri = (endIdx >= 0 ? afterSlash[..endIdx] : afterSlash).Trim();
 
+            // Optional: parse simple query params for collation preferences (?locale=en&caseSensitive=true)
+            int question = afterSlash.IndexOf('?');
+            if (question >= 0 && question < afterSlash.Length - 1)
+            {
+                var query = afterSlash[(question + 1)..];
+                var queryParts = query.Split('&', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var qp in queryParts)
+                {
+                    var kv = qp.Split('=', 2);
+                    if (kv.Length != 2) continue;
+                    var key = kv[0].Trim();
+                    var val = kv[1].Trim();
+                    if (key.Equals("locale", StringComparison.OrdinalIgnoreCase))
+                    {
+                        localeFromUri = val;
+                    }
+                    else if (key.Equals("caseSensitive", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (bool.TryParse(val, out var isCaseSensitive))
+                        {
+                            caseSensitiveFromUri = isCaseSensitive;
+                        }
+                    }
+                }
+            }
+
             if (string.IsNullOrEmpty(dbFromUri))
                 throw new ArgumentException("Database parameter is required.", nameof(connectionString));
 
-            return new MongoConnectionOptions(connectionString, dbFromUri);
+            return new MongoConnectionOptions(connectionString, dbFromUri, caseSensitiveFromUri, localeFromUri);
         }
 
         // XPO-style "key=value;key=value" connection string
@@ -77,7 +106,17 @@ public sealed record MongoConnectionOptions(string MongoUrl, string DatabaseName
             throw new ArgumentException("Database parameter is required.", nameof(connectionString));
         }
         database = SafeDbName(database);
-        return new MongoConnectionOptions(uri, database);
+
+        bool? caseSensitive = null;
+        if (parsed.TryGetValue("CaseSensitive", out var caseSensitiveStr) && bool.TryParse(caseSensitiveStr, out var parsedBool))
+        {
+            caseSensitive = parsedBool;
+        }
+
+        string collationLocale = null;
+        parsed.TryGetValue("CollationLocale", out collationLocale);
+
+        return new MongoConnectionOptions(uri, database, caseSensitive, collationLocale);
     }
 
     /// <summary>

@@ -28,6 +28,8 @@ public sealed partial class MongoDataStore : IDataStore
     private readonly MongoResultMaterializer materializer = new MongoResultMaterializer();
     private readonly IMongoDatabase database;
     private readonly AutoCreateOption autoCreateOption;
+    private readonly bool? connectionCaseSensitive;
+    private readonly string connectionLocale;
 
     /// <summary>
     /// Gets the last generated aggregation plan (for diagnostics).
@@ -105,7 +107,8 @@ public sealed partial class MongoDataStore : IDataStore
                         new CreateIndexOptions
                         {
                             Unique = xpoIndex.IsUnique,
-                            Name = indexName
+                            Name = indexName,
+                            Collation = GetCollation()
                         }
                     ));
                 }
@@ -140,7 +143,8 @@ public sealed partial class MongoDataStore : IDataStore
                     new CreateIndexOptions
                     {
                         Unique = true,   // PK must be unique
-                        Name = pkName
+                        Name = pkName,
+                        Collation = GetCollation()
                     }
                 ));
             }
@@ -194,22 +198,28 @@ public sealed partial class MongoDataStore : IDataStore
         return new SelectedData(results.ToArray());
     }
 
-    private static AggregateOptions GetAggregateOptions()
+    private AggregateOptions GetAggregateOptions()
     {
-        var caseSensitive = XpoDefault.DefaultCaseSensitive;
-        var culture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-
         var options = new AggregateOptions
         {
-            Collation = new Collation(
-                locale: culture,                   // we can make this configurable later
-                strength: caseSensitive
-                    ? CollationStrength.Tertiary   // case-sensitive
-                    : CollationStrength.Secondary, // case-insensitive
-                caseLevel: false                   // no need for caseLevel unless strength < 2
-            )
+            Collation = GetCollation()
         };
         return options;
+    }
+
+    private Collation GetCollation()
+    {
+        var caseSensitive = connectionCaseSensitive ?? XpoDefault.DefaultCaseSensitive;
+        var culture = !string.IsNullOrWhiteSpace(connectionLocale)
+            ? connectionLocale
+            : CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+        return new Collation(
+            locale: culture,                   // we can make this configurable later
+            strength: caseSensitive
+                ? CollationStrength.Tertiary   // case-sensitive
+                : CollationStrength.Secondary, // case-insensitive
+            caseLevel: false                   // no need for caseLevel unless strength < 2
+        );
     }
 
     /// <summary>
@@ -281,7 +291,8 @@ public sealed partial class MongoDataStore : IDataStore
             identityParam = insert.IdentityParameter;
         }
 
-        collection.InsertOne(document);
+        collection.InsertOne(document)
+        ;
         return identityParam;
     }
 
@@ -303,7 +314,10 @@ public sealed partial class MongoDataStore : IDataStore
         }
 
         var updateDoc = new BsonDocument("$set", setDoc);
-        var result = collection.UpdateMany(filter, updateDoc);
+        var result = collection.UpdateMany(filter, updateDoc, new UpdateOptions
+        {
+            Collation = GetCollation()
+        });
         var affected = result.MatchedCount;
         if (update.RecordsAffected != 0 && update.RecordsAffected != affected)
         {
@@ -315,7 +329,10 @@ public sealed partial class MongoDataStore : IDataStore
     {
         var collection = database.GetCollection<BsonDocument>(delete.Table.Name);
         var filter = BuildFilter(delete.Table.Name, delete.Alias, delete.Condition);
-        var result = collection.DeleteMany(filter);
+        var result = collection.DeleteMany(filter, new DeleteOptions
+        {
+            Collation = GetCollation()
+        });
         if (delete.RecordsAffected != 0 && delete.RecordsAffected != result.DeletedCount)
         {
             throw new LockingException();

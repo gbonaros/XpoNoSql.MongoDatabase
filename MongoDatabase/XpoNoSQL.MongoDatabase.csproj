@@ -19,9 +19,10 @@
 		<RepositoryUrl>https://github.com/gbonaros/XpoNoSql.MongoDatabase.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>DevExpress;XPO;MongoDB;DataStore;NoSQL;.NET;XAF</PackageTags>
+		<PackageTags>DevExpress;XPO;XAF;MongoDB;NoSQL;DataStore;ORM;Database;Provider;.NET</PackageTags>
 
 		<!-- Build & pack -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>

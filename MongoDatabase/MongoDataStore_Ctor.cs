@@ -30,6 +30,8 @@ public sealed partial class MongoDataStore : IDataStore
         Client = new MongoClient(options.MongoUrl);
         database = Client.GetDatabase(options.DatabaseName);
         this.autoCreateOption = autoCreateOption;
+        connectionCaseSensitive = options.CaseSensitive;
+        connectionLocale = options.CollationLocale;
         ConnectionString = connectionString;
 
         //_tablesByName = new Dictionary<string, DBTable>(StringComparer.OrdinalIgnoreCase);

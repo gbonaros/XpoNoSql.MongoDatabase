@@ -30,8 +30,9 @@ public static class MongoConnectionProvider
 
     /// <summary>
     /// Builds a MongoDB connection string that references the V2 provider.
+    /// Optional collation parameters can be supplied to keep case/locale stable across clients.
     /// </summary>
-    public static string GetConnectionString(string connectionUri, string database)
+    public static string GetConnectionString(string connectionUri, string database, bool? caseSensitive = null, string collationLocale = null)
     {
         if (string.IsNullOrWhiteSpace(connectionUri))
         {
@@ -43,7 +44,24 @@ public static class MongoConnectionProvider
             throw new ArgumentException("Database cannot be empty.", nameof(database));
         }
 
-        return $"XpoProvider={XpoProviderTypeString};Data Source={ConnectionProviderSql.EscapeConnectionStringArgument(connectionUri)};Database={ConnectionProviderSql.EscapeConnectionStringArgument(database)};";
+        var parts = new List<string>
+        {
+            $"XpoProvider={XpoProviderTypeString}",
+            $"Data Source={ConnectionProviderSql.EscapeConnectionStringArgument(connectionUri)}",
+            $"Database={ConnectionProviderSql.EscapeConnectionStringArgument(database)}"
+        };
+
+        if (caseSensitive.HasValue)
+        {
+            parts.Add($"CaseSensitive={caseSensitive.Value}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(collationLocale))
+        {
+            parts.Add($"CollationLocale={ConnectionProviderSql.EscapeConnectionStringArgument(collationLocale)}");
+        }
+
+        return string.Join(';', parts) + ";";
     }
 
     /// <summary>
