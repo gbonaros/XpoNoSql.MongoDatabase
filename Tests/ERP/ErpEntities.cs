@@ -2,7 +2,7 @@ using DevExpress.Xpo;
 
 using System;
 
-namespace XpoNoSQL.MongoDatabase.Tests.ERP;
+namespace XpoNoSql.Tests;
 
 [Persistent("ErpCustomers")]
 public sealed class ErpCustomer : XPObject

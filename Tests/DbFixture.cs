@@ -4,22 +4,22 @@ using DevExpress.Xpo.DB.Helpers;
 using DevExpress.Xpo.Exceptions;
 
 using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 
 using System.ComponentModel;
 
 using Testcontainers.MongoDb;
-
 using XpoNoSQL.MongoDatabase.Core;
 
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests;
+namespace XpoNoSql.Tests;
 
 public sealed class DbFixture : IAsyncLifetime
 {
-    private MongoDbContainer _container;
+    private DockerContainer _container;
 
-    private const string DefaultDatabaseName = "xpo-mongo-tests";
+    private const string DefaultDatabaseName = "xpo-tests";
     private IDisposable[] providerDisposables = Array.Empty<IDisposable>();
     private string connectionUri = "mongodb://localhost:27118";
     IDataStore provider;
@@ -29,6 +29,7 @@ public sealed class DbFixture : IAsyncLifetime
     public Task InitializeAsync()
     {
         //BuildSqlLocal();
+        //BuildDynamoDB();
         BuildForMongoDatabase();
         return Task.CompletedTask;
     }
@@ -40,23 +41,49 @@ public sealed class DbFixture : IAsyncLifetime
         DataLayer = new ThreadSafeDataLayer(provider);
 
     }
+    //private void BuildDynamoDB()
+    //{
+    //    var _container = new DynamoDbBuilder()
+    //        .WithImage("amazon/dynamodb-local:latest")
+    //        .WithName($"xponosql-dynamodb-{DefaultDatabaseName}")
+    //        .WithCleanUp(false)
+    //        .WithReuse(true)
+    //        .Build();
+
+    //    _container.StartAsync().GetAwaiter().GetResult();
+
+    //    connectionUri = ((DynamoDbContainer)_container).GetConnectionString();
+
+    //    DynamoConnectionProvider.Register();
+
+    //    var connectionString = DynamoConnectionProvider.GetConnectionString(
+    //        region: "us-east-1",           // any valid AWS region string works for local
+    //        tablePrefix: "test_",          // optional namespace for test tables
+    //        serviceUrl: connectionUri, 
+    //        accessKey: "test",             // dummy creds accepted by DynamoDB Local/LocalStack
+    //        secretKey: "test",             // dummy creds accepted by DynamoDB Local/LocalStack
+    //        sessionToken: null,
+    //        profile: null);
+
+    //    provider = XpoDefault.GetConnectionProvider(connectionString, AutoCreateOption.DatabaseAndSchema);
+    //    DataLayer = new ThreadSafeDataLayer(provider);
+    //}
     private void BuildForMongoDatabase()
     {
         bool useContainer = true;
         if (useContainer) // use the container or a default local mongodb
         {
             _container = new MongoDbBuilder()
-                    //.WithImage("mongo:7.0") // or whatever version you prefer
                     .WithPortBinding(27017, true)
                     .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(27017)))
                     .WithCleanUp(false)
                     .WithReuse(true)
-                    .WithName($"{DefaultDatabaseName}")
+                    .WithName($"xponosql-mongodb-{DefaultDatabaseName}")
                     .Build();
 
             _container.StartAsync().GetAwaiter().GetResult();
 
-            connectionUri = _container.GetConnectionString();
+            connectionUri = ((MongoDbContainer)_container).GetConnectionString();
         }
         // Ensure XPO knows how to resolve "mongodb://" connections
         MongoConnectionProvider.Register();

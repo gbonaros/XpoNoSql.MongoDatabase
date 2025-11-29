@@ -9,7 +9,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests.ERP;
+namespace XpoNoSql.Tests;
 
 [Collection(XpoCollection.Name)]
 public class ErpCombinedTests

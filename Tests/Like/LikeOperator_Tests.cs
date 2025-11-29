@@ -4,7 +4,8 @@ using DevExpress.Data.Filtering;
 using FluentAssertions;
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Core.Tests;
+
+namespace XpoNoSql.Tests;
 
 [Collection(XpoCollection.Name)]
 public class LikeOperator_Tests

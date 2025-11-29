@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests.ToDo
+namespace XpoNoSql.Tests
 {
     [Collection(XpoCollection.Name)]
     public class ToDo1

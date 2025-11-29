@@ -3,7 +3,7 @@ using DevExpress.Xpo.DB;
 
 using FluentAssertions;
 
-namespace XpoNoSQL.MongoDatabase.Core.Tests;
+namespace XpoNoSql.Tests;
 
 using System;
 using System.Linq;

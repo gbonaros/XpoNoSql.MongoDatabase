@@ -2,7 +2,7 @@ using System;
 using DevExpress.Xpo;
 
 // Legacy model entities used across tests (MongoProvider.Tests.Models)
-namespace MongoProvider.Tests.Models
+namespace XpoNoSql.Tests
 {
     public class Customer : XPBaseObject
     {
@@ -67,11 +67,7 @@ namespace MongoProvider.Tests.Models
             set => SetPropertyValue(nameof(Order), ref order, value);
         }
     }
-}
 
-// Entities used for XPO-centric tests (MongoProvider.Tests.Entities)
-namespace MongoProvider.Tests.Entities
-{
     [Persistent("Customers")]
     public sealed class TestCustomer : XPObject
     {
@@ -157,11 +153,7 @@ namespace MongoProvider.Tests.Entities
 
         public decimal Bonus { get; set; }
     }
-}
 
-// Simple test entities (XpoNoSQL.MongoDatabase.Tests.Simple)
-namespace XpoNoSQL.MongoDatabase.Tests.Simple
-{
     [Persistent("SimpleItems")]
     public sealed class SimpleItem : XPObject
     {

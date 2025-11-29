@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace XpoNoSQL.MongoDatabase.Core.Tests.V3
+namespace XpoNoSql.Tests
 {
     internal class MongoSubqueryStressTests
     {

@@ -4,7 +4,7 @@ using DevExpress.Xpo;
 using System;
 using System.Linq;
 
-namespace XpoNoSQL.MongoDatabase.Core.Tests;
+namespace XpoNoSql.Tests;
 
 // Minimal persistent classes used by the tests (copied from your smoke)
 [Persistent]

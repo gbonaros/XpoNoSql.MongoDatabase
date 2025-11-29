@@ -5,11 +5,9 @@ using FluentAssertions;
 
 using System.Linq;
 
-using MongoProvider.Tests.Models;
-
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests.Binary;
+namespace XpoNoSql.Tests;
 
 [Collection(XpoCollection.Name)]
 public class BinaryOperatorTests

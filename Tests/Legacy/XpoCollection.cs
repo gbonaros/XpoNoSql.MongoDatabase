@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests;
+namespace XpoNoSql.Tests;
 
 [CollectionDefinition(Name, DisableParallelization = true)]
 public sealed class XpoCollection : ICollectionFixture<DbFixture>

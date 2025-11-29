@@ -22,9 +22,6 @@
 		<PackageReference Include="MongoDB.Driver" Version="3.5.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Subqueries\" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\MongoDatabase\XpoNoSQL.MongoDatabase.csproj" />
 	</ItemGroup>
 

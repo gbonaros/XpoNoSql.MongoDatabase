@@ -6,7 +6,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Core.Tests;
+namespace XpoNoSql.Tests;
 [Collection(XpoCollection.Name)]
 public class XPViewProjectionAndAggregateTests
 {

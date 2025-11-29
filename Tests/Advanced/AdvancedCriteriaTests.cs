@@ -5,11 +5,9 @@ using FluentAssertions;
 
 using System.Linq;
 
-using MongoProvider.Tests.Models;
-
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests.Advanced;
+namespace XpoNoSql.Tests;
 
 [Collection(XpoCollection.Name)]
 public class AdvancedCriteriaTests

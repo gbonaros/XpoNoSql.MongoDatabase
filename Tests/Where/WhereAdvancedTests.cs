@@ -5,11 +5,11 @@ using FluentAssertions;
 
 using System.Linq;
 
-using MongoProvider.Tests.Models;
+
 
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests.Where;
+namespace XpoNoSql.Tests;
 
 [Collection(XpoCollection.Name)]
 public class WhereAdvancedTests

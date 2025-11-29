@@ -1,10 +1,5 @@
-using MongoProvider.Tests.Models;
-using MongoProvider.Tests.Entities;
-using XpoNoSQL.MongoDatabase.Tests.Simple;
-using XpoNoSQL.MongoDatabase.Tests.ERP;
-using XpoNoSQL.MongoDatabase.Tests.ToDo;
 
-namespace XpoNoSQL.MongoDatabase.Tests;
+namespace XpoNoSql.Tests;
 
 internal static class TestCleanup
 {

@@ -1,15 +1,13 @@
-using XpoNoSQL.MongoDatabase.Tests;
 using System.Linq;
 
 using DevExpress.Xpo;
 
 using FluentAssertions;
 
-using MongoProvider.Tests.Entities;
-
 using Xunit;
 
-namespace XpoNoSQL.MongoDatabase.Tests.Legacy.V2;
+
+namespace XpoNoSql.Tests;
 
 [Collection(XpoCollection.Name)]
 public class CustomerOrderExistsAllTests
