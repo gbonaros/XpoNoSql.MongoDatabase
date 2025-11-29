@@ -49,7 +49,7 @@ public sealed class DbFixture : IAsyncLifetime
                     //.WithImage("mongo:7.0") // or whatever version you prefer
                     .WithPortBinding(27017, true)
                     .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(27017)))
-                    .WithCleanUp(true)
+                    .WithCleanUp(false)
                     .WithReuse(true)
                     .WithName($"{DefaultDatabaseName}")
                     .Build();
